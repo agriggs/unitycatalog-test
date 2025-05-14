@@ -27,3 +27,12 @@ def get_spark_session(catalog_url, catalog, token):
         .getOrCreate()
     
     return spark
+
+
+# from _env import *
+
+# catalog = oss_unity_catalog
+# catalog_url = oss_unity_catalog_url
+# token = oss_unity_catalog_admin_token
+
+# spark = get_spark_session(catalog_url, catalog, token)
