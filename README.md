@@ -65,6 +65,8 @@ keytool -list -v --trustcacerts -cacerts -storepass changeit -alias <root-cert-n
 
 ### Spark Notebooks
 
+Before running the notebooks, create `_env.py` file updating the `sample_env.py` items
+
 - [OSS Unity Catalog](unity_catalog_oss_spark_client.ipynb)
 - [Databricks Unity Catalog](unity_catalog_databricks_spark_client.ipynb)
 
