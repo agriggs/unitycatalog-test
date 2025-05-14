@@ -1,8 +1,9 @@
 import subprocess
 import json
 import logging
-from datetime import datetime
-from pyspark.sql import SparkSession
+
+from _env import *
+from spark_config import get_spark_session
 
 # Configure logging
 logging.basicConfig(
@@ -12,15 +13,16 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Configuration
-databricks_profile = "enodo"
+databricks_profile = databricks_cli_profile
 workspace_url = "https://adb-3947916102150554.14.azuredatabricks.net"
 uc_api_path = "api/2.1/unity-catalog"
-uc_catalog_name = "enodo"
+uc_catalog_name = databricks_catalog
+uc_catalog_url = databricks_unity_catalog_url
 schema_name = "govcontracting"
-table_name = "awards_details"
+table_name = "cancelled_awards"
 
 def get_databricks_token():
-    """Get Databricks OAuth token using CLI"""
+    logger.info(f"Get Databricks OAuth token using CLI for profile: {databricks_profile}")
     try:
         result = subprocess.run(
             ['databricks', 'auth', 'token', '--profile', databricks_profile, '--output', 'JSON'],
@@ -39,21 +41,12 @@ def get_databricks_token():
 def main():
     try:
         # Get Databricks token and set up headers
-        token = get_databricks_token()
-             
-        logger.info(f"Create Spark session")
-        spark = SparkSession.builder \
-            .appName("UC REST") \
-            .master("local[1]") \
-            .config("spark.jars.packages", "io.delta:delta-spark_2.12:3.1.0,com.microsoft.azure:azure-storage:8.6.6,org.apache.hadoop:hadoop-azure:3.3.3") \
-            .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
-            .getOrCreate()       
+        # Doesn't work so using PAT
+        # token = get_databricks_token()
+        token = databricks_unity_catalog_admin_token
 
-        spark.conf.set("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") 
-        spark.conf.set(f"spark.sql.catalog.{uc_catalog_name}", "org.apache.spark.sql.delta.catalog.DeltaCatalog") 
-        spark.conf.set(f"spark.sql.catalog.{uc_catalog_name}.uri", f"{workspace_url}/{uc_api_path}") 
-        spark.conf.set(f"spark.sql.catalog.{uc_catalog_name}.token", token) 
-        spark.conf.set("spark.sql.defaultCatalog", uc_catalog_name) 
+        logger.info(f"Create Spark session")
+        spark = get_spark_session(uc_catalog_url, uc_catalog_name, token)
 
         # Read the Delta table from Unity Catalog
         logger.info(f"Reading Delta table: {uc_catalog_name}.{schema_name}.{table_name}")
@@ -66,20 +59,7 @@ def main():
 
         # Show sample data
         # logger.info("Sample data from the Delta table:")
-        # df.show(5)
-
-
-        # path = f"{credentials['storage_url']}"    
-        # logger.info(f"Reading data from: {path}")
-        # df = spark.read.format("delta").load(path)
-                
-        # logger.info(f"Successfully read Delta table. Schema:")
-        # df.printSchema()
-        # logger.info(f"Total rows: {df.count()}")
-        
-        # Show sample data
-        # logger.info("Sample data from the Delta table:")
-        # df.show(5)        
+        # df.show(5)    
               
     except Exception as e:
         logger.error(f"Error: {str(e)}")
