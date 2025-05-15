@@ -10,7 +10,7 @@ def get_spark_session(catalog_url, catalog, token):
     :return: A configured Spark session.
     """
     
-    unity_jars = "io.delta:delta-spark_2.12:3.2.1,io.unitycatalog:unitycatalog-spark_2.12:0.2.0"
+    unity_jars = "io.delta:delta-spark_2.12:3.3.1,io.unitycatalog:unitycatalog-spark_2.12:0.2.0"
     azure_storage_jars = "org.apache.hadoop:hadoop-common:3.3.4,org.apache.hadoop:hadoop-azure:3.3.4"
 
     # Create a Spark session with Unity Catalog configuration
