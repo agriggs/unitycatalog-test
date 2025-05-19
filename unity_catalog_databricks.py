@@ -29,6 +29,9 @@ def get_databricks_token():
             capture_output=True,
             text=True
         )
+        if result.returncode != 0:
+            raise Exception(f"Error retrieving Databricks OAuth token: {result.stderr}")
+       
         token_data = json.loads(result.stdout)
         if 'access_token' in token_data:
             logger.info("Databricks OAuth token retrieved successfully.")
@@ -42,8 +45,8 @@ def main():
     try:
         # Get Databricks token and set up headers
         # Doesn't work so using PAT
-        # token = get_databricks_token()
-        token = databricks_unity_catalog_admin_token
+        token = get_databricks_token()
+        # token = databricks_unity_catalog_admin_token
 
         logger.info(f"Create Spark session")
         spark = get_spark_session(uc_catalog_url, uc_catalog_name, token)
@@ -58,8 +61,8 @@ def main():
         logger.info(f"Total rows: {df.count()}")
 
         # Show sample data
-        # logger.info("Sample data from the Delta table:")
-        # df.show(5)    
+        logger.info("Sample data from the Delta table:")
+        df.show(5)    
               
     except Exception as e:
         logger.error(f"Error: {str(e)}")

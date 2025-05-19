@@ -71,3 +71,14 @@ Before running the notebooks, create `_env.py` file updating the `sample_env.py`
 - [Databricks Unity Catalog](unity_catalog_databricks_spark_client.ipynb)
 
 Both the notebooks use [spark_config.py](./spark_config.py) to create Spark Session
+
+### Python with Databricks CLI
+
+Install Databricks CLI: https://learn.microsoft.com/en-us/azure/databricks/dev-tools/cli/install
+
+Login to Databricks with CLI
+```
+databricks auth login --profile <profile>
+```
+
+Use user's OAuth token from Databricks CLI login: [Python Databricks Unity Catalog](./unity_catalog_databricks.py)
