@@ -15,8 +15,8 @@ def main():
     try:
         # Get Databricks token and set up headers
         # Doesn't work so using PAT
-        if databricks_unity_catalog_admin_token:
-            token = databricks_unity_catalog_admin_token
+        if databricks_unity_catalog_personal_access_token:
+            token = databricks_unity_catalog_personal_access_token
         else:
             token = get_databricks_token(databricks_profile)
     
